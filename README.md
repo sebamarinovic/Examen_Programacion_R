@@ -67,13 +67,11 @@ Gráficos incluidos para validar el modelo:
 ---
 
 ## 📂 Archivos Relevantes
-📁 /Modelamiento/
-├── Modelamiento_Final.pdf # Informe técnico del análisis
-├── data.csv # Datos operativos EP-110
-├── temp_gcp_data.csv # Temperaturas de gases (opcional)
-├── analisis_ep110.R # Función modular para análisis
-├── app.R # App Shiny interactiva
-└── README.md # Este documento
+- data.csv # Datos operativos EP-110
+- temp_gcp_data.csv # Temperaturas de gases
+- analisis_ep110.R # Función modular para análisis
+- app.R # App Shiny interactiva
+- README.md # Este documento
 
 ---
 
