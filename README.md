@@ -87,7 +87,7 @@ Se implementa una app con **Shiny** que permite:
 - Tomar decisiones basadas en datos operativos actualizados
 
 **URL de la app (si publicada en shinyapps.io)**:  
-📎 `https://<usuario>.shinyapps.io/dashboard_ep110`
+📎 ` https://sebamarinovic.shinyapps.io/Examen/`
 
 ---
 
