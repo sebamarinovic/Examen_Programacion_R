@@ -97,3 +97,6 @@ Se implementa una app con **Shiny** que permite:
 ```r
 install.packages(c("shiny", "tidyverse", "lubridate", "plotly", "DT", "broom"))
 
+## 👨‍🔧 Autor
+Sebastián Marinovic
+Magíster en Ciencia de Datos — Universidad de las Américas, 2025
