@@ -63,7 +63,7 @@ Usando como predictores:
 install.packages(c("shiny", "tidyverse", "lubridate", "DT", "plotly", "glue", "xgboost", "caret", "earth"))
 
 # Ejecutar app
-shiny::runApp("ruta/a/tu/app")
+shiny::runApp(https://sebamarinovic.shinyapps.io/Examen/)
 ```
 
 ##💡 Interpretación operativa
