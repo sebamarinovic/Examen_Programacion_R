@@ -75,7 +75,6 @@ Gráficos incluidos para validar el modelo:
 ├── app.R # App Shiny interactiva
 └── README.md # Este documento
 
-
 ---
 
 ## 🚀 Aplicación Interactiva
@@ -96,6 +95,7 @@ Se implementa una app con **Shiny** que permite:
 
 ```r
 install.packages(c("shiny", "tidyverse", "lubridate", "plotly", "DT", "broom"))
+```
 
 ## 👨‍🔧 Autor
 Sebastián Marinovic
