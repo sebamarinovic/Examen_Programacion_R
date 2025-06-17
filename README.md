@@ -1,4 +1,4 @@
-# 📊 Dashboard de Análisis Térmico EP-110 con XGBoost
+# 📊 Dashboard de Análisis Térmico EP-110
 
 ## 🔍 Descripción
 
