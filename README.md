@@ -2,49 +2,31 @@
 
 ## 🔍 Descripción
 
-Esta aplicación **Shiny** permite monitorear y analizar el desempeño térmico de los equipos **EP-110** en plantas GCP-2 y GCP-4, utilizando un modelo predictivo **XGBoost** para estimar el comportamiento de la temperatura de salida de agua (**Temperatura**) en función de factores operacionales clave.
-
-El dashboard es interactivo y entrega visualizaciones, métricas y recomendaciones operacionales en base al análisis de eficiencia térmica.
-
----
-
-## ⚙️ Estructura de la App
-
-- **Inputs del usuario:**
-  - Selección de **rango de fechas**
-  - Selección de **planta**
-
-- **Outputs principales:**
-  - 🔍 **Equipos críticos** por desempeño térmico (Δ Agua).
-  - 🛠️ **Ciclos de mantenimiento** detectados en el periodo.
-  - 🤖 **Modelo predictivo XGBoost**
-    - Entrenado en tiempo real.
-    - Evaluación con RMSE y R².
-    - Comparación de valores reales vs predichos.
-  - 📈 **Visualizaciones**
-    - Serie temporal de Δ Agua.
-    - Boxplot por equipo.
-    - Correlaciones térmicas.
+Este dashboard interactivo desarrollado en R + Shiny permite el análisis operacional y predictivo del sistema de enfriamiento EP-110 en plantas GCP-2 y GCP-4.
+El objetivo es apoyar la toma de decisiones mediante la visualización de métricas térmicas clave y modelos de machine learning interpretables.
 
 ---
 
-## 🧠 Modelo Predictivo
+## 🧪 Funcionalidades Principales
+### 🔍 Exploración de Datos Operacionales:
+  - Δ Agua por equipo y fecha
+  - Temperatura de entrada y simulada de gases (TempGas) 
+  - Intervenciones de mantenimiento (modo resumen y gráfico)
 
-Se entrena un modelo de regresión con `xgboost` para predecir la variable:
+### 📈 Modelado Predictivo:
+  - Entrenamiento de modelo XGBoost
+  - Predicción de Δ Agua en función de variables operacionales
+  - Evaluación del modelo con RMSE y R²
 
-- **Temperatura (salida de agua)**
+### 🧠 Interpretabilidad:
+  - Gráfico PDP (Partial Dependence Plot) de TempGas
+  - Cálculo de pendiente estimada para interpretar influencia de TempGas sobre Δ Agua
 
-Usando como predictores:
-
-- `Delta.Agua`
-- `Temp.Entrada.Agua.Torre`
-- `TempGas` (temperatura de gases de combustión)
-- `Grupo_Tren_Equipo` (factor operacional)
-
-**Métricas de evaluación (en conjunto de prueba):**
-
-- `RMSE`: Error cuadrático medio.
-- `R²`: Capacidad explicativa del modelo.
+### 🧾 Resumen Ejecutivo:
+- Última lectura de TempGas
+- Equipo más crítico según % bajo 4 °C
+- Diagnóstico de mantenimiento
+- Indicadores de desempeño del modelo
 
 ---
 
