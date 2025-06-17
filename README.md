@@ -15,16 +15,16 @@ El dashboard es interactivo y entrega visualizaciones, métricas y recomendacion
   - Selección de **planta**
 
 - **Outputs principales:**
-  - 🔍 **Equipos críticos** por desempeño térmico (Δ Agua)
-  - 🛠️ **Ciclos de mantenimiento** detectados en el periodo
+  - 🔍 **Equipos críticos** por desempeño térmico (Δ Agua).
+  - 🛠️ **Ciclos de mantenimiento** detectados en el periodo.
   - 🤖 **Modelo predictivo XGBoost**
-    - Entrenado en tiempo real
-    - Evaluación con RMSE y R²
-    - Comparación de valores reales vs predichos
+    - Entrenado en tiempo real.
+    - Evaluación con RMSE y R².
+    - Comparación de valores reales vs predichos.
   - 📈 **Visualizaciones**
-    - Serie temporal de Δ Agua
-    - Boxplot por equipo
-    - Correlaciones térmicas
+    - Serie temporal de Δ Agua.
+    - Boxplot por equipo.
+    - Correlaciones térmicas.
 
 ---
 
@@ -43,8 +43,8 @@ Usando como predictores:
 
 **Métricas de evaluación (en conjunto de prueba):**
 
-- `RMSE`: Error cuadrático medio
-- `R²`: Capacidad explicativa del modelo
+- `RMSE`: Error cuadrático medio.
+- `R²`: Capacidad explicativa del modelo.
 
 ---
 
@@ -67,12 +67,12 @@ https://sebamarinovic.shinyapps.io/Examen/
 ```
 
 ## 💡 Interpretación operativa
-- Los valores de Δ Agua menores a 4 °C indican eficiencia térmica baja ❄️
-- El modelo permite detectar patrones no lineales y anticipar pérdida de rendimiento
-- Equipos con alta frecuencia bajo el umbral crítico deben ser priorizados para mantención preventiva
+- Los valores de Δ Agua menores a 4 °C indican eficiencia térmica baja.
+- El modelo permite detectar patrones no lineales y anticipar pérdida de rendimiento.
+- Equipos con alta frecuencia bajo el umbral crítico deben ser priorizados para mantención preventiva.
 
 ✍️ Autoría
-Desarrollado por Sebastian Marinovic Leiva
+Desarrollado por Sebastian Marinovic Leiva.
 
 📦 Basado en R + Shiny + ML con xgboost
 📅 Fecha: Junio 2025
