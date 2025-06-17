@@ -28,6 +28,9 @@ El objetivo es apoyar la toma de decisiones mediante la visualización de métri
 - Diagnóstico de mantenimiento
 - Indicadores de desempeño del modelo
 
+### 📊 Capturas de ejemplo
+![image](https://github.com/user-attachments/assets/1136b320-e871-431a-a4b5-147d277ce123)
+
 ---
 
 ## 📁 Archivos necesarios
