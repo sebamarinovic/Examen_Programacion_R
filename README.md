@@ -66,7 +66,7 @@ install.packages(c("shiny", "tidyverse", "lubridate", "DT", "plotly", "glue", "x
 https://sebamarinovic.shinyapps.io/Examen/
 ```
 
-##💡 Interpretación operativa
+## 💡 Interpretación operativa
 - Los valores de Δ Agua menores a 4 °C indican eficiencia térmica baja ❄️
 - El modelo permite detectar patrones no lineales y anticipar pérdida de rendimiento
 - Equipos con alta frecuencia bajo el umbral crítico deben ser priorizados para mantención preventiva
