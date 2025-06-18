@@ -48,7 +48,7 @@ El objetivo es apoyar la toma de decisiones mediante la visualización de métri
 install.packages(c("shiny", "tidyverse", "lubridate", "DT", "plotly", "glue", "xgboost", "caret", "earth"))
 
 # Ejecutar app
-https://sebamarinovic.shinyapps.io/Examen/
+https://sebamarinovic.shinyapps.io/Examen_R/
 ```
 
 ## 💡 Interpretación operativa
