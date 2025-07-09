@@ -34,7 +34,7 @@ Este proyecto busca analizar el comportamiento térmico del sistema de enfriamie
 - Equipo más crítico por % registros con Δ Agua < 4 °C.
 - Estado de mantenciones.
 - Desempeño del modelo predictivo.
-- 
+
 ### 📊 Capturas de ejemplo
 ![image](https://github.com/user-attachments/assets/1136b320-e871-431a-a4b5-147d277ce123)
 
@@ -48,7 +48,6 @@ Este proyecto busca analizar el comportamiento térmico del sistema de enfriamie
 | `Modelamiento.Rmd`         | Informe analítico en RMarkdown                     |
 | `data.csv`                 | Dataset principal con registros de operación        |
 | `temp_gcp_data.csv`        | Datos complementarios de temperatura de gases       |
-| `Examen R Data Science_final.pdf` | Instrucciones y rúbrica del examen         |
 
 ---
 
@@ -69,7 +68,7 @@ https://sebamarinovic.shinyapps.io/Examen_R/
 
 # 📘 Modelamiento Térmico Operacional
 
-Este documento contiene el desarrollo analítico del comportamiento térmico en las plantas industriales **GCP-2** y **GCP-4**, usando herramientas estadísticas y de machine learning para entender y predecir  como afecta el rendimiento de los enfriadores, en relación con variables críticas del sistema de enfriamiento tal como la temperatura de gases de salida. 
+Este documento contiene el desarrollo analítico del comportamiento térmico en las plantas industriales **GCP-2** y **GCP-4**, usando herramientas estadísticas y de machine learning para entender y predecir como afecta el rendimiento de los enfriadores, en relación con variables críticas del sistema de enfriamiento tal como la temperatura de gases de salida. 
 
 ---
 
