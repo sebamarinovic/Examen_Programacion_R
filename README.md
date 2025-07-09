@@ -4,7 +4,7 @@
 ## 🎬 Video Explicativo del Proyecto
 Para complementar la entrega, se incluye un video donde se explica en detalle el desarrollo del proyecto, la función analisis_ep110, el modelado con XGBoost y el funcionamiento de la aplicación Shiny.
 
-###🎥 Ver video explicativo:
+### 🎥 Ver video explicativo:
 🔗 https://drive.google.com/file/d/1_CxHEm_cfOvw92n2mzeJveQxckkL0qm5/view?usp=sharing
 
 
