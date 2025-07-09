@@ -59,7 +59,7 @@ https://sebamarinovic.shinyapps.io/Examen_R/
 - El modelo permite detectar patrones no lineales y anticipar pérdida de rendimiento.
 - Equipos con alta frecuencia bajo el umbral crítico deben ser priorizados para mantención preventiva.
 
-# 📘 Modelamiento Térmico Operacional — Informe RMarkdown
+# 📘 Modelamiento Térmico Operacional
 
 Este documento contiene el desarrollo analítico del comportamiento térmico en las plantas industriales **GCP-2** y **GCP-4**, usando herramientas estadísticas y de machine learning para entender y predecir  como afecta el rendimiento de los enfriadores, en relación con variables críticas del sistema de enfriamiento tal como la temperatura de gases de salida. 
 
