@@ -2,32 +2,31 @@
 
 ## 🔍 Descripción
 
-Este dashboard interactivo desarrollado en R + Shiny permite el análisis operacional y predictivo del sistema de enfriamiento EP-110 en plantas GCP-2 y GCP-4.
-El objetivo es apoyar la toma de decisiones mediante la visualización de métricas térmicas clave y modelos de machine learning interpretables.
+Este proyecto busca analizar el comportamiento térmico del sistema de enfriamiento **EP-110** en las plantas industriales **GCP-2** y **GCP-4**, mediante una aplicación `Shiny` en R. Se combina exploración de datos, visualización interactiva y modelado predictivo con técnicas de machine learning para asistir la toma de decisiones operativas y de mantenimiento.
 
 ---
 
 ## 🧪 Funcionalidades Principales
-### 🔍 Exploración de Datos Operacionales:
-  - Δ Agua por equipo y fecha
-  - Temperatura de entrada y simulada de gases (TempGas) 
-  - Intervenciones de mantenimiento (modo resumen y gráfico)
+### 📉 Exploración de datos
+- Series de tiempo y boxplots de Δ Agua por equipo.
+- Estadísticas de ciclos de mantenimiento.
+- Evolución de TempGas por planta.
 
-### 📈 Modelado Predictivo:
-  - Entrenamiento de modelo XGBoost
-  - Predicción de Δ Agua en función de variables operacionales
-  - Evaluación del modelo con RMSE y R²
+### ⚙️ Modelamiento predictivo
+- Entrenamiento con XGBoost (`xgboost`, `caret`).
+- Predicción de Δ Agua en función de `Temp Entrada Agua Torre`, `TempGas` y clasificación `Grupo_Tren_Equipo`.
+- Métricas de evaluación: RMSE y R².
 
-### 🧠 Interpretabilidad:
-  - Gráfico PDP (Partial Dependence Plot) de TempGas
-  - Cálculo de pendiente estimada para interpretar influencia de TempGas sobre Δ Agua
+### 🔬 Interpretabilidad
+- Gráfico PDP (`pdp`) de `TempGas → Δ Agua`.
+- Cálculo de pendiente estimada para interpretación operativa.
 
-### 🧾 Resumen Ejecutivo:
-- Última lectura de TempGas
-- Equipo más crítico según % bajo 4 °C
-- Diagnóstico de mantenimiento
-- Indicadores de desempeño del modelo
-
+### 🧾 Diagnóstico Ejecutivo Automático
+- Última lectura de `TempGas`.
+- Equipo más crítico por % registros con Δ Agua < 4 °C.
+- Estado de mantenciones.
+- Desempeño del modelo predictivo.
+- 
 ### 📊 Capturas de ejemplo
 ![image](https://github.com/user-attachments/assets/1136b320-e871-431a-a4b5-147d277ce123)
 
@@ -35,9 +34,13 @@ El objetivo es apoyar la toma de decisiones mediante la visualización de métri
 
 ## 📁 Archivos necesarios
 
-- `data.csv` → Datos de operación por equipo 
-- `temp_gcp_data.csv` → Temperatura de gases 
-- `app.R` o script dividido en `ui.R` y `server.R`
+| Archivo                     | Descripción                                         |
+|-----------------------------|-----------------------------------------------------|
+| `app.R`                    | App principal en R + Shiny                          |
+| `Modelamiento.Rmd`         | Informe analítico en RMarkdown                     |
+| `data.csv`                 | Dataset principal con registros de operación        |
+| `temp_gcp_data.csv`        | Datos complementarios de temperatura de gases       |
+| `Examen R Data Science_final.pdf` | Instrucciones y rúbrica del examen         |
 
 ---
 
