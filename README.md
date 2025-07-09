@@ -1,5 +1,13 @@
 # 📊 Dashboard de Análisis Térmico EP-110
 
+
+## 🎬 Video Explicativo del Proyecto
+Para complementar la entrega, se incluye un video donde se explica en detalle el desarrollo del proyecto, la función analisis_ep110, el modelado con XGBoost y el funcionamiento de la aplicación Shiny.
+
+###🎥 Ver video explicativo:
+🔗 https://drive.google.com/file/d/1_CxHEm_cfOvw92n2mzeJveQxckkL0qm5/view?usp=sharing
+
+
 ## 🔍 Descripción
 
 Este proyecto busca analizar el comportamiento térmico del sistema de enfriamiento **EP-110** en las plantas industriales **GCP-2** y **GCP-4**, mediante una aplicación `Shiny` en R. Se combina exploración de datos, visualización interactiva y modelado predictivo con técnicas de machine learning para asistir la toma de decisiones operativas y de mantenimiento.
