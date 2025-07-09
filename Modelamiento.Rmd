@@ -1,0 +1,252 @@
+---
+title: "Modelamiento Térmico Operacional"
+author: "Sebastian Marinovic Leiva"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+  pdf_document: default
+subtitle: Relación entre Δ Agua Enfriadores y Temperatura de Gases de Salida
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(lmtest)
+library(mgcv)
+library(broom)
+library(earth)
+library(xgboost)
+library(iml)
+library(caret)
+library(patchwork)
+library(lubridate)
+```
+
+# 1. Introducción
+El presente informe aborda el análisis del comportamiento térmico en las plantas de procesamiento GCP-2 y GCP-4, específicamente en las líneas de proceso A y B, con el propósito de optimizar la eficiencia operativa de los sistemas de enfriamiento. La temperatura de los gases de salida (denominada Temperatura) es una variable crítica que refleja el desempeño térmico de los equipos, influenciada por factores operacionales como la diferencia de temperatura del agua en los enfriadores (Delta.Agua), la temperatura de entrada del agua de la torre de enfriamiento (Temp.Entrada.Agua.Torre) y la configuración de las líneas de proceso (Grupo_Tren_Equipo). Mediante la aplicación de modelos estadísticos y de machine learning, este estudio busca identificar patrones y relaciones entre estas variables, proporcionando herramientas predictivas e interpretativas para la toma de decisiones operacionales. El análisis incluye la comparación de modelos para evaluar su capacidad predictiva y la interpretación de los resultados mediante técnicas como Partial Dependence Plots (PDP), con el fin de cuantificar el impacto de las variables clave en el comportamiento térmico.
+
+# 2. Objetivos
+- **Analizar las relaciones entre las variables térmicas y operacionales:** Identificar y cuantificar las interacciones entre la temperatura de gases de salida y las variables predictoras (Delta.Agua, Temp.Entrada.Agua.Torre y Grupo_Tren_Equipo) para comprender su influencia en el desempeño térmico de las plantas GCP-2 y GCP-4.
+- **Comparar el desempeño de modelos estadísticos y de machine learning:** Evaluar la precisión y capacidad predictiva de diferentes enfoques de modelamiento, incluyendo regresión lineal, polinomial, modelos aditivos generalizados (GAM), MARS y XGBoost, mediante métricas como RMSE y R², para determinar el modelo más adecuado para la predicción de la temperatura de gases.
+- **Evaluar la contribución de cada planta y línea de proceso:** Analizar las diferencias en el comportamiento térmico entre las plantas GCP-2 y GCP-4, así como entre sus respectivas líneas A y B, para identificar patrones específicos y apoyar la optimización de las operaciones en los sistemas de enfriamiento.
+
+# 3. Preparación de Datos
+```{r}
+# === CARGAR DATOS ===
+data_gases <- read.csv("temp_gcp_data.csv")
+data_delta <- read.csv("data.csv")
+
+# === PREPROCESAMIENTO DE GASES ===
+data_gases <- data_gases %>%
+  mutate(FechaHora = ymd_hms(FechaHora),
+         Fecha = as.Date(FechaHora),
+         Planta = case_when(
+           Tren %in% c("GCP-2A", "GCP-2B") ~ "GCP-2",
+           Tren %in% c("GCP-4A", "GCP-4B") ~ "GCP-4"
+         ))
+
+# === PREPROCESAMIENTO DE DELTA ===
+data_delta <- data_delta %>%
+  filter(Estado == "En Servicio") %>%
+  mutate(Fecha = as.Date(Fecha))
+
+# === MAPEO ENTRE TREN Y EQUIPO ===
+mapeo <- tibble(
+  Tren = rep(c("GCP-2A", "GCP-2B", "GCP-4A", "GCP-4B"), each = 3),
+  Equipo = rep(c("EP-110 A", "EP-110 B", "EP-110 C", "EP-110 D", "EP-110 E", "EP-110 F"), 2)
+)
+
+# === CALCULAR TEMP MEDIA POR FECHA Y PLANTA ===
+temp_gases_diaria <- data_gases %>%
+  group_by(Fecha, Planta) %>%
+  summarise(TempGas = mean(Temperatura, na.rm = TRUE), .groups = "drop")
+
+# === UNIÓN Y CONSTRUCCIÓN FINAL DE data_combined ===
+data_combined <- data_gases %>%
+  left_join(mapeo, by = "Tren") %>%
+  inner_join(data_delta, by = c("Fecha", "Planta", "Equipo")) %>%
+  mutate(Grupo_Tren_Equipo = case_when(
+    Tren == "GCP-2A" & Equipo %in% c("EP-110 A", "EP-110 B", "EP-110 C") ~ "GCP2_LineaA",
+    Tren == "GCP-2B" & Equipo %in% c("EP-110 D", "EP-110 E", "EP-110 F") ~ "GCP2_LineaB",
+    Tren == "GCP-4A" & Equipo %in% c("EP-110 A", "EP-110 B", "EP-110 C") ~ "GCP4_LineaA",
+    Tren == "GCP-4B" & Equipo %in% c("EP-110 D", "EP-110 E", "EP-110 F") ~ "GCP4_LineaB"
+  )) %>%
+  filter(!is.na(Grupo_Tren_Equipo)) %>%
+  mutate(Grupo_Tren_Equipo = droplevels(factor(Grupo_Tren_Equipo))) %>%
+  left_join(temp_gases_diaria, by = c("Fecha", "Planta"))  # ✅ AGREGAMOS TempGas AQUÍ
+
+```
+
+# 4. Comparación de Modelos Aplicados
+```{r}
+set.seed(123)  # Reproducibilidad
+
+# --- MATRIZ DE DISEÑO PARA XGBOOST (agregando TempGas) ---
+x_data <- model.matrix(Temperatura ~ Delta.Agua + Temp.Entrada.Agua.Torre + TempGas + Grupo_Tren_Equipo, 
+                       data = data_combined)[, -1]
+y_data <- data_combined$Temperatura
+
+# --- VERIFICAR NROW COINCIDE ---
+stopifnot(nrow(x_data) == length(y_data))
+
+# --- PARTICIÓN TRAIN/TEST ---
+train_index <- createDataPartition(y_data, p = 0.8, list = FALSE)
+test_index  <- setdiff(seq_along(y_data), train_index)
+
+x_train <- x_data[train_index, ]
+y_train <- y_data[train_index]
+x_test  <- x_data[test_index, ]
+y_test  <- y_data[test_index]
+
+# --- CREAR DMATRIX ---
+dtrain <- xgb.DMatrix(data = x_train, label = y_train)
+dtest  <- xgb.DMatrix(data = x_test, label = y_test)
+
+# --- ENTRENAMIENTO DE MODELOS (TODOS CON TempGas) ---
+modelo_simple     <- lm(Temperatura ~ Delta.Agua, data = data_combined)
+modelo_extendido  <- lm(Temperatura ~ Delta.Agua + Temp.Entrada.Agua.Torre + TempGas + Grupo_Tren_Equipo, data = data_combined)
+modelo_poly       <- lm(Temperatura ~ poly(Delta.Agua, 2) + Temp.Entrada.Agua.Torre + TempGas + Grupo_Tren_Equipo, data = data_combined)
+modelo_gam        <- gam(Temperatura ~ s(Delta.Agua) + Temp.Entrada.Agua.Torre + TempGas + Grupo_Tren_Equipo, data = data_combined)
+modelo_mars       <- earth(Temperatura ~ Delta.Agua + Temp.Entrada.Agua.Torre + TempGas + Grupo_Tren_Equipo, data = data_combined)
+modelo_xgb        <- xgboost(data = dtrain, objective = "reg:squarederror", nrounds = 100, verbose = 0)
+
+# --- VERIFICAR QUE modelo_xgb SE CREÓ ---
+if (!exists("modelo_xgb")) stop("Error: modelo_xgb no se creó correctamente")
+
+# --- PREDICCIONES SOBRE TEST SET ---
+df_test <- data_combined[test_index, ]
+pred_simple     <- predict(modelo_simple, newdata = df_test)
+pred_extendido  <- predict(modelo_extendido, newdata = df_test)
+pred_poly       <- predict(modelo_poly, newdata = df_test)
+pred_gam        <- predict(modelo_gam, newdata = df_test)
+pred_mars       <- predict(modelo_mars, newdata = df_test)
+pred_xgb        <- predict(modelo_xgb, newdata = x_test)
+
+# --- MÉTRICAS DE COMPARACIÓN ---
+metricas <- tibble(
+  Modelo = c("Lineal Simple", "Lineal Múltiple", "Polinomial", "GAM", "MARS", "XGBoost"),
+  RMSE   = c(
+    sqrt(mean((y_test - pred_simple)^2)),
+    sqrt(mean((y_test - pred_extendido)^2)),
+    sqrt(mean((y_test - pred_poly)^2)),
+    sqrt(mean((y_test - pred_gam)^2)),
+    sqrt(mean((y_test - pred_mars)^2)),
+    sqrt(mean((y_test - pred_xgb)^2))
+  ),
+  R2     = c(
+    1 - sum((y_test - pred_simple)^2) / sum((y_test - mean(y_test))^2),
+    1 - sum((y_test - pred_extendido)^2) / sum((y_test - mean(y_test))^2),
+    1 - sum((y_test - pred_poly)^2) / sum((y_test - mean(y_test))^2),
+    1 - sum((y_test - pred_gam)^2) / sum((y_test - mean(y_test))^2),
+    1 - sum((y_test - pred_mars)^2) / sum((y_test - mean(y_test))^2),
+    1 - sum((y_test - pred_xgb)^2) / sum((y_test - mean(y_test))^2)
+  )
+)
+
+print(metricas)
+
+# --- VISUALIZACIÓN COMPARATIVA ---
+df_test <- df_test %>%
+  mutate(
+    Pred_simple    = pred_simple,
+    Pred_extendido = pred_extendido,
+    Pred_poly      = pred_poly,
+    Pred_gam       = pred_gam,
+    Pred_mars      = pred_mars,
+    Pred_xgb       = pred_xgb
+  )
+
+# Función para crear gráficos individuales
+grafico_pred <- function(df, pred_col, titulo, color) {
+  ggplot(df, aes(x = Temperatura, y = .data[[pred_col]])) +
+    geom_point(alpha = 0.5, color = color) +
+    geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
+    labs(title = titulo, x = "Temperatura Real", y = "Temperatura Predicha") +
+    theme_minimal()
+}
+
+# Graficar
+p1 <- grafico_pred(df_test, "Pred_simple", "Lineal Simple", "gray30")
+p2 <- grafico_pred(df_test, "Pred_extendido", "Lineal Múltiple", "steelblue")
+p3 <- grafico_pred(df_test, "Pred_poly", "Polinomial", "forestgreen")
+p4 <- grafico_pred(df_test, "Pred_gam", "GAM", "purple")
+p5 <- grafico_pred(df_test, "Pred_mars", "MARS", "orange")
+p6 <- grafico_pred(df_test, "Pred_xgb", "XGBoost", "firebrick")
+
+(p1 | p2 | p3) / (p4 | p5 | p6)
+
+# Guardar gráfico
+ggsave("comparacion_modelos_real_vs_pred_test.png", width = 14, height = 8)
+```
+# 5. Simulación Impacto Gas con PDP (Partial Dependence Plot)
+```{r}
+# --- CALCULAR PDP PARA TempGas ---
+library(iml)
+
+# Crear la función de predicción que procesa newdata correctamente
+predict_function <- function(model, newdata) {
+  # Convertir newdata a matriz numérica, replicando el preprocesamiento
+  newdata_matrix <- model.matrix(
+    ~ Delta.Agua + Temp.Entrada.Agua.Torre + TempGas + Grupo_Tren_Equipo,
+    data = newdata
+  )[, -1]  # Eliminar la columna de intercepto
+  # Realizar la predicción con el modelo xgboost
+  predict(model, newdata_matrix)
+}
+
+# Crear el objeto Predictor para el modelo XGBoost
+predictor <- Predictor$new(
+  model = modelo_xgb, 
+  data = data_combined[, c("Delta.Agua", "Temp.Entrada.Agua.Torre", "TempGas", "Grupo_Tren_Equipo")], 
+  y = data_combined$Temperatura,
+  predict.function = predict_function
+)
+
+# Calcular el Partial Dependence Plot para TempGas
+pdp_tempgas <- FeatureEffect$new(
+  predictor = predictor, 
+  feature = "TempGas", 
+  method = "pdp"
+)
+
+# Extraer los resultados del PDP como data.frame
+pdp_df <- pdp_tempgas$results
+
+# Verificar la estructura de pdp_df para confirmar el nombre de la columna
+str(pdp_df)  # Inspeccionar las columnas
+
+# Ajuste lineal simple sobre el PDP, usando .value en lugar de yhat
+modelo_pendiente <- lm(.value ~ TempGas, data = pdp_df)
+pendiente <- coef(modelo_pendiente)[2]  # Guardamos la pendiente
+
+# Gráfico PDP + línea recta (pendiente)
+ggplot(pdp_df, aes(x = TempGas, y = .value)) +
+  geom_line(color = "black", size = 1) +  # Línea PDP
+  geom_abline(intercept = coef(modelo_pendiente)[1],
+              slope = coef(modelo_pendiente)[2],
+              color = "firebrick", linetype = "dashed", size = 1.1) +  # Línea de pendiente
+  labs(
+    title = "PDP + Pendiente Lineal",
+    subtitle = paste0("Pendiente ≈ ", round(pendiente, 3), " °C/°C"),
+    x = "Temperatura Gases de Salida (TempGas)",
+    y = "Temperatura Predicha"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+# Extraer pendiente como derivada promedio del PDP
+pdp_df <- pdp_tempgas$results
+pendiente <- coef(lm(.value ~ TempGas, data = pdp_df))[2]
+```
+
+# 6. Conclusiones
+
+- El modelo **XGBoost** mostró el mejor desempeño predictivo, con un RMSE ≈ 1.13 y un R² ≈ 93.5%, superando ampliamente modelos lineales y semi-paramétricos.
+- El análisis mediante **Partial Dependence Plot (PDP)** indica una relación **cuantificable** entre la temperatura de gases (`TempGas`) y el Δ de agua (`Δ Agua`):
+  - La pendiente estimada fue de aproximadamente `r round(pendiente, 3)` °C/°C.
+  - Esto implica que por cada grado que aumenta la temperatura de gases, el Δ Agua disminuye en promedio `r abs(round(pendiente, 3))` °C.
+- Este resultado valida el uso de **modelos interpretables** como soporte en la toma de decisiones operacionales y predictivas.
+- Se recomienda el uso del modelo XGBoost como motor de diagnóstico para eficiencia térmica y mantenimiento predictivo en sistemas de enfriamiento EP-110.
+
