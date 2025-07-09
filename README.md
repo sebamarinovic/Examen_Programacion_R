@@ -138,6 +138,9 @@ install.packages(c("tidyverse", "xgboost", "caret", "earth", "mgcv", "lubridate"
 **Sebastian Marinovic Leiva** 
 
 📦 Basado en R + Shiny + ML con xgboost
+
 📄 RMarkdown: modelamiento.Rmd
+
 🧠 Proyecto: Análisis de Eficiencia Térmica EP-110
+
 📅 Fecha: Julio 2025
