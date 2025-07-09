@@ -100,7 +100,8 @@ Se construyen y validan los siguientes modelos predictivos para estimar `Tempera
 | **XGBoost**     | **1.13**| **93.5**|
 
 🔴 *XGBoost* es el modelo con **mayor precisión predictiva**, logrando un ajuste sobresaliente con R² ≈ 93.5%.
-![comparacion_modelos_real_vs_pred_test](https://github.com/user-attachments/assets/61770f27-9849-4dc1-b88d-f00b9d3ef5c6)
+
+![image](https://github.com/user-attachments/assets/dedb3d0d-5cde-4aed-b71e-86f2c2ae32a2)
 
 ---
 
@@ -114,7 +115,8 @@ Se utilizó la librería `pdp` para analizar el efecto marginal de `TempGas` sob
 
 ✏️ Este resultado entrega una **interpretación cuantitativa** crucial para comprender cómo afecta el sobrecalentamiento del sistema de gases a la eficiencia térmica del sistema de enfriamiento.
 
-![image](https://github.com/user-attachments/assets/64613117-13d2-4994-ba96-cfef7278d259)
+![image](https://github.com/user-attachments/assets/28777f04-2c24-4aef-9c07-f379a623de95)
+
 
 ---
 
