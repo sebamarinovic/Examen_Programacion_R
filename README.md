@@ -100,7 +100,8 @@ Se construyen y validan los siguientes modelos predictivos para estimar `Tempera
 | **XGBoost**     | **1.13**| **93.5**|
 
 🔴 *XGBoost* es el modelo con **mayor precisión predictiva**, logrando un ajuste sobresaliente con R² ≈ 93.5%.
-![image](https://github.com/user-attachments/assets/e1f5bba4-5d1f-4f8f-b0b6-bb263164c993)
+![comparacion_modelos_real_vs_pred_test](https://github.com/user-attachments/assets/61770f27-9849-4dc1-b88d-f00b9d3ef5c6)
+
 ---
 
 ## 📊 Resultados del Análisis PDP
